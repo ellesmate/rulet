@@ -16,3 +16,6 @@ env/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+*.sqlite3
+migrations/
