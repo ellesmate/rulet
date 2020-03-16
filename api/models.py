@@ -1,5 +1,7 @@
 from django.db import models  # TODO: SqlLite to PostgreSQL
 
+from account.models import Account
+
 
 class Place(models.Model):
     name = models.CharField(max_length=50)
@@ -20,19 +22,27 @@ class Restaurant(models.Model):
         return f"{self.place.name} the restaurant"
 
 
+# class WorkingTime(models.Model):
+#     weakday = models.
+
+
 class Product(models.Model):
     name = models.CharField(max_length=100, blank=False)
     price = models.IntegerField()  # Price dollar * 100
-    time = models.TimeField()
+    time = models.DurationField()
     recipe = models.TextField()
-    total_weight = models.FloatField()  # TODO: Auto calculating field
+    # total_weight = models.FloatField()  # TODO: Auto calculating field
+
+    @property
+    def total_weight(self):
+        return sum(ingredient.weight for ingredient in self.ingredient_set.all())
 
     def __str__(self):
         return f"{self.name}:{self.price/100}$/{self.total_weight}g"
 
 
 class Order(models.Model):
-    customer = models.ForeignKey("auth.User", on_delete=models.CASCADE)
+    customer = models.ForeignKey(Account, on_delete=models.CASCADE)
     products = models.ManyToManyField(Product)
 
     def __str__(self):
@@ -49,7 +59,7 @@ class Ingredient(models.Model):
 
 
 class Employee(models.Model):
-    user = models.OneToOneField("auth.User", on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
 
