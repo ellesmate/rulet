@@ -3,65 +3,109 @@ from django.db import models  # TODO: SqlLite to PostgreSQL
 from account.models import Account
 
 
-class Place(models.Model):
-    name = models.CharField(max_length=50)
-    address = models.CharField(max_length=80)
+class Region(models.Model):
+    name = models.CharField(max_length=40)
+
+
+class Address(models.Model):
+    street_name = models.CharField(max_length=40)
+    street_number = models.CharField(max_length=20)
+    zipcode = models.IntegerField()
+    town = models.CharField(max_length=40)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+
+
+class Efficiency(models.Model):
+    efficiency_rate = models.FloatField()
+
+
+class Foundation(models.Model):
+    name = models.CharField(max_length=60)
+    image = models.ImageField()
+    address = models.CharField(max_length=60)
+    phone = models.CharField(max_length=12)
+    rate = models.FloatField()
 
     def __str__(self):
-        return f"{self.name} the place"
+        return f'{self.name} at {self.address}'
 
 
-class Restaurant(models.Model):
-    place = models.OneToOneField(
-        Place,
-        on_delete=models.CASCADE,
-        primary_key=True,
-    )
-
-    def __str__(self):
-        return f"{self.place.name} the restaurant"
-
-
-# class WorkingTime(models.Model):
-#     weakday = models.
-
-
-class Product(models.Model):
-    name = models.CharField(max_length=100, blank=False)
-    price = models.IntegerField()  # Price dollar * 100
-    time = models.DurationField()
-    recipe = models.TextField()
-    # total_weight = models.FloatField()  # TODO: Auto calculating field
-
-    @property
-    def total_weight(self):
-        return sum(ingredient.weight for ingredient in self.ingredient_set.all())
-
-    def __str__(self):
-        return f"{self.name}:{self.price/100}$/{self.total_weight}g"
-
-
-class Order(models.Model):
-    customer = models.ForeignKey(Account, on_delete=models.CASCADE)
-    products = models.ManyToManyField(Product)
-
-    def __str__(self):
-        return ", ".join([p.name for p in self.products.all()]) + " for " + str(self.customer)
-
-
-class Ingredient(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, blank=False)
-    weight = models.FloatField()
-
+class Category(models.Model):
+    name = models.CharField(max_length=30)
+    image = models.ImageField()
+    foundation = models.ForeignKey(Foundation, on_delete=models.CASCADE)
+    
     def __str__(self):
         return self.name
 
 
-class Employee(models.Model):
-    user = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True)
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
+class MenuItem(models.Model):
+    item_type = models.CharField(max_length=30)
+    price = models.IntegerField()
+    available = models.BooleanField()
+    item_description = models.TextField()
+    image = models.ImageField()
+    size = models.IntegerField()
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    foundation = models.ForeignKey(Foundation, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.name} employee at {self.restaurant}"
+        return self.item_type
+
+
+# class DrinkItem(MenuItem):
+#     drink_type = models.CharField(max_length=30)
+#     size = models.IntegerField()
+
+
+# class FoodItem(MenuItem):
+#     food_type = models.CharField(max_length=30)
+#     calories = models.IntegerField()
+#     weight = models.IntegerField()
+
+
+class Customer(Account):
+    pass
+
+
+class Order(models.Model):
+    customer = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL)
+    menu_items = models.ManyToManyField(MenuItem)
+    take_out = models.BooleanField()
+
+
+class Employee(models.Model):
+    first_name = models.CharField(max_length=30)
+    middle_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    email = models.EmailField()
+    address = models.OneToOneField(Address, on_delete=models.CASCADE)
+    efficiency = models.OneToOneField(Efficiency, on_delete=models.CASCADE)
+    department = models.CharField(max_length=80)    # TODO: different object
+    position = models.CharField(max_length=80)
+
+
+class Chef(Employee):
+    specialty = models.CharField(max_length=50)
+    occupied = models.BooleanField()
+    current_order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
+
+
+class Cashier(Employee):
+    terminalNo = models.IntegerField()
+    sessionNo = models.IntegerField()
+
+
+class Waiter(Cashier):
+    field = models.CharField(max_length=30)
+    currently_serving = models.BooleanField()
+
+
+class Manager(Employee):
+    pass
+
+
+class Supervisor(Employee):
+    pass
+
+

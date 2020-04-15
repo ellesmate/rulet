@@ -1,22 +1,47 @@
 from rest_framework import viewsets, permissions
-from .models import Restaurant, Product, Place, Employee, Order, Ingredient
-from .serializers import RestaurantSerializer, EmployeeSerializer, IngredientSerializer,\
-    OrderSerializer, PlaceSerializer, ProductSerializer
+from rest_framework.response import Response
+from .models import Waiter, Cashier, Chef, Order, Customer, MenuItem, Foundation, Category
+from .serializers import WaiterSerializer, CashierSerializer, ChefSerializer, OrderSerializer, \
+    CustomerSerializer, MenuItemSerializer, FoundationSerializer, CategorySerializer
 
 
-class RestaurantViewSet(viewsets.ModelViewSet):
-    queryset = Restaurant.objects.all()
-    serializer_class = RestaurantSerializer
+class FoundationViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Foundation.objects.all()
+    serializer_class = FoundationSerializer
 
 
-class EmployeeViewSet(viewsets.ModelViewSet):
-    queryset = Employee.objects.all()
-    serializer_class = EmployeeSerializer
+class CategoryViewSet(viewsets.ModelViewSet):
+    # queryset = Category.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        # fnd_pk = self.request.fnd_pk
+        foundation_pk = self.kwargs['foundation_pk']
+        # print(a)
+        return Category.objects.filter(foundation__pk=foundation_pk)
+    
+    # def list(self, request, fnd_pk):
+    #     qt = Category.objects.all()
+    #     serializer = self.get_serializer(qt, many=True)
+    #     return Response(serializer.data)
 
 
-class IngredientViewSet(viewsets.ModelViewSet):
-    queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
+
+class WaiterViewSet(viewsets.ModelViewSet):
+    queryset = Waiter.objects.all()
+    serializer_class = WaiterSerializer
+
+
+class CashierViewSet(viewsets.ModelViewSet):
+    queryset = Cashier.objects.all()
+    serializer_class = CashierSerializer
+
+
+class ChefViewSet(viewsets.ModelViewSet):
+    queryset = Chef.objects.all()
+    serializer_class = ChefSerializer
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -24,11 +49,33 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
 
 
-class PlaceViewSet(viewsets.ModelViewSet):
-    queryset = Place.objects.all()
-    serializer_class = PlaceSerializer
+class CustomerViewSet(viewsets.ModelViewSet):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
 
 
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+class MenuItemViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    # queryset = MenuItem.objects.all()
+    serializer_class = MenuItemSerializer
+
+    def list(self, request, *args, **kwargs):
+        category = request.query_params.get('category')
+
+        queryset = self.get_queryset()
+        if category:
+            queryset = queryset.filter(category__pk=category)
+        
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serialzier = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+    def get_queryset(self):
+        foundation_pk = self.kwargs['foundation_pk']
+        return MenuItem.objects.filter(foundation__pk=foundation_pk)
+

@@ -1,38 +1,61 @@
 from rest_framework import serializers
-from .models import Restaurant, Product, Place, Employee, Order, Ingredient
+from .models import Waiter, Cashier, Chef, Order, Customer, MenuItem, Foundation, Category
 
 
-class RestaurantSerializer(serializers.HyperlinkedModelSerializer):
+class FoundationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Restaurant
+        model = Foundation
         fields = '__all__'
 
 
-class ProductSerializer(serializers.HyperlinkedModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Product
+        model = Category
         fields = '__all__'
 
 
-class PlaceSerializer(serializers.HyperlinkedModelSerializer):
+class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Place
+        model = Customer
         fields = '__all__'
 
 
-class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
+class MenuItemSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Employee
+        model = MenuItem
+        fields = '__all__'
+
+# class FoodItemSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = FoodItem
+#         fields = '__all__'
+
+
+# class DrinkItemSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = DrinkItem
+#         fields = '__all__'
+
+
+class WaiterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Waiter
         fields = '__all__'
 
 
-class OrderSerializer(serializers.HyperlinkedModelSerializer):
+class CashierSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cashier
+        fields = '__all__'
+
+
+class ChefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chef
+        fields = '__all__'
+
+
+class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = '__all__'
-
-
-class IngredientSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Ingredient
         fields = '__all__'
