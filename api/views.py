@@ -6,14 +6,14 @@ from .serializers import WaiterSerializer, CashierSerializer, ChefSerializer, Or
 
 
 class FoundationViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     queryset = Foundation.objects.all()
     serializer_class = FoundationSerializer
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     # queryset = Category.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     serializer_class = CategorySerializer
 
     def get_queryset(self):
@@ -45,6 +45,7 @@ class ChefViewSet(viewsets.ModelViewSet):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
+    # permission_classes = [permissions.IsAuthenticated]
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
@@ -55,7 +56,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
 
 class MenuItemViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     # queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
 

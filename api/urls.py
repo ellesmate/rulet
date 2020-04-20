@@ -35,6 +35,15 @@ menuitem_detail = views.MenuItemViewSet.as_view({
     'get': 'retrieve',
 })
 
+order_list = views.OrderViewSet.as_view({
+    'get': 'list',
+    'post': 'create',
+})
+
+order_detail = views.OrderViewSet.as_view({
+    'get': 'retrieve',
+})
+
 
 
 urlpatterns = [
@@ -44,5 +53,7 @@ urlpatterns = [
     path('foundations/<int:pk>/', foundation_detail, name='foundation-detail'),
     path('foundations/<int:foundation_pk>/categories/', category_list, name='category-list'),
     path('foundations/<int:foundation_pk>/menuitems/', menuitem_list, name='menuitem-list'),
-    path('foundations/<int:foundation_pk>/menuitems/<int:pk>', menuitem_detail, name='menuitem-detail'),
+    path('foundations/<int:foundation_pk>/menuitems/<int:pk>/', menuitem_detail, name='menuitem-detail'),
+    path('foundations/<int:foundation_pk>/orders/', order_list, name='order-list'),
+    path('foundations/<int:foundation_pk>/orders/<int:pk>/', order_detail, name='order-detail'),
 ]

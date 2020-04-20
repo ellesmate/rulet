@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # from .models import Place, Restaurant, Product, Ingredient, Employee, Order
-from .models import Waiter, Cashier, Chef, Order, Customer, Foundation, Category, MenuItem
+from .models import Waiter, Cashier, Chef, Order, Customer, Foundation, Category, MenuItem, OrderItem
 
 
 admin.site.register(Waiter)
@@ -14,6 +14,7 @@ admin.site.register(MenuItem)
 # admin.site.register(DrinkItem)
 admin.site.register(Foundation)
 admin.site.register(Category)
+admin.site.register(OrderItem)
 
 
 # class IngredientInline(admin.StackedInline):

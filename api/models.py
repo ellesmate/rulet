@@ -1,4 +1,5 @@
 from django.db import models  # TODO: SqlLite to PostgreSQL
+from django.core.validators import MinValueValidator
 
 from account.models import Account
 
@@ -69,9 +70,15 @@ class Customer(Account):
 
 
 class Order(models.Model):
-    customer = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL)
-    menu_items = models.ManyToManyField(MenuItem)
+    customer = models.ForeignKey(Customer, blank=True, null=True, on_delete=models.SET_NULL)
+    # order_items = models.ManyToManyField(OrderItem)
     take_out = models.BooleanField()
+
+
+class OrderItem(models.Model):
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    amount = models.IntegerField(validators=[MinValueValidator])
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
 
 class Employee(models.Model):
