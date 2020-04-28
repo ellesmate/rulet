@@ -1,10 +1,14 @@
+import channels.layers
 from rest_framework import serializers
-from .models import Waiter, Cashier, Chef, Order, Customer, MenuItem, Foundation, Category, OrderItem
+from asgiref.sync import async_to_sync
 
 
-class FoundationSerializer(serializers.ModelSerializer):
+from .models import Waiter, Cashier, Chef, Order, Customer, MenuItem, Entity, Category, OrderItem
+
+
+class EntitySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Foundation
+        model = Entity
         fields = '__all__'
 
 
@@ -54,54 +58,37 @@ class ChefSerializer(serializers.ModelSerializer):
         model = Chef
         fields = '__all__'
 
-class OrderItemListSerializer(serializers.ListSerializer):
-    def create(self, validated_data):
-        ret = []
+# class OrderItemListSerializer(serializers.ListSerializer):
+#     def create(self, validated_data):
+#         ret = []
 
-        for data in validated_data:
-            ret.append(self.child.create(data))
-        return ret
+#         for data in validated_data:
+#             ret.append(self.child.create(data))
+#         return ret
 
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         # list_serializer_class = OrderItemListSerializer
         model = OrderItem
-        fields = ('amount', 'menu_item')
-
-    # def to_representation(self, instance):
-    #     return {
-    #         'id': instance.id,
-    #         'amount': instance.amount,
-    #         'menu_item': instance.menu_item,
-    #     }
-    
-    # def to_internal_value(self, data):
-    #     amount = data.get['amount']
-    #     menu_item = data.get['menu_item']
-
-    #     if not amount:
-    #         raise serializers.ValidationError({
-    #             'amount': 'This field is required'
-    #         })
-    #     if not menu_item:
-    #         raise serializers.ValidationError({
-    #             'menu_item': 'This field is required'
-    #         })
-        
-    #     return {
-    #         'amount': amount,
-    #         'menu_item': menu_item,
-    #     }
+        fields = '__all__'
 
 
-
-
+class CreateOrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = ('menu_item', 'amount')
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    # order_items = serializers.PrimaryKeyRelatedField(many=True, queryset=OrderItem.objects.all())
     orderitem_set = OrderItemSerializer(many=True)
-    # menu_items = serializers.DjangoModelField()
+    class Meta:
+        model = Order
+        fields = '__all__'
+    
+
+class CreateOrderSerializer(serializers.ModelSerializer):
+    # order_items = serializers.PrimaryKeyRelatedField(many=True, queryset=OrderItem.objects.all())
+    orderitem_set = CreateOrderItemSerializer(many=True)
     class Meta:
         model = Order
         fields = '__all__'
@@ -113,9 +100,21 @@ class OrderSerializer(serializers.ModelSerializer):
         for each in orderitem_validated_data:
             each['order'] = order
         orderitems = orderitem_set_serializer.create(orderitem_validated_data)
+
+        channel_layer = channels.layers.get_channel_layer()
+
+        serializer = OrderSerializer(order)
+
+        entity_name = order.entity.id
+        async_to_sync(channel_layer.group_send)(
+            f'kitchen_{entity_name}', 
+            {
+                'type': 'new_order',
+                'order': serializer.data
+            }
+        )
+
         return order
-    
-    # menu_items = serializers.SerializerMethodField()
 
     
 

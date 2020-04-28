@@ -5,7 +5,7 @@ from . import views
 
 
 # router = routers.DefaultRouter()
-# router.register(r'foundations', views.FoundationViewSet)
+# router.register(r'entitys', views.EntityViewSet)
 # router.register(r'chefs', views.ChefViewSet)
 # router.register(r'cashiers', views.CashierViewSet)
 # router.register(r'customers', views.CustomerViewSet)
@@ -14,12 +14,12 @@ from . import views
 # router.register(r'waiters', views.WaiterViewSet)
 # router.register(r'category', views.CategoryViewSet)
 
-foundation_list = views.FoundationViewSet.as_view({
+entity_list = views.EntityViewSet.as_view({
     'get': 'list',
     'post': 'create',
 })
 
-foundation_detail = views.FoundationViewSet.as_view({
+entity_detail = views.EntityViewSet.as_view({
     'get': 'retrieve',
 })
 
@@ -49,11 +49,11 @@ order_detail = views.OrderViewSet.as_view({
 urlpatterns = [
     # path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
-    path('foundations/', foundation_list, name='foundation-list'),
-    path('foundations/<int:pk>/', foundation_detail, name='foundation-detail'),
-    path('foundations/<int:foundation_pk>/categories/', category_list, name='category-list'),
-    path('foundations/<int:foundation_pk>/menuitems/', menuitem_list, name='menuitem-list'),
-    path('foundations/<int:foundation_pk>/menuitems/<int:pk>/', menuitem_detail, name='menuitem-detail'),
-    path('foundations/<int:foundation_pk>/orders/', order_list, name='order-list'),
-    path('foundations/<int:foundation_pk>/orders/<int:pk>/', order_detail, name='order-detail'),
+    path('entity/', entity_list, name='entity-list'),
+    path('entity/<int:pk>/', entity_detail, name='entity-detail'),
+    path('entity/<int:entity_pk>/categories/', category_list, name='category-list'),
+    path('entity/<int:entity_pk>/menuitems/', menuitem_list, name='menuitem-list'),
+    path('entity/<int:entity_pk>/menuitems/<int:pk>/', menuitem_detail, name='menuitem-detail'),
+    path('entity/<int:entity_pk>/orders/', order_list, name='order-list'),
+    path('entity/<int:entity_pk>/orders/<int:pk>/', order_detail, name='order-detail'),
 ]

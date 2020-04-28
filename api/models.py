@@ -20,7 +20,7 @@ class Efficiency(models.Model):
     efficiency_rate = models.FloatField()
 
 
-class Foundation(models.Model):
+class Entity(models.Model):
     name = models.CharField(max_length=60)
     image = models.ImageField()
     address = models.CharField(max_length=60)
@@ -34,7 +34,7 @@ class Foundation(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=30)
     image = models.ImageField()
-    foundation = models.ForeignKey(Foundation, on_delete=models.CASCADE)
+    entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.name
@@ -48,7 +48,7 @@ class MenuItem(models.Model):
     image = models.ImageField()
     size = models.IntegerField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    foundation = models.ForeignKey(Foundation, on_delete=models.CASCADE)
+    entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.item_type
@@ -70,7 +70,9 @@ class Customer(Account):
 
 
 class Order(models.Model):
+    entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, blank=True, null=True, on_delete=models.SET_NULL)
+    time = models.DateTimeField(auto_now_add=True)
     # order_items = models.ManyToManyField(OrderItem)
     take_out = models.BooleanField()
 

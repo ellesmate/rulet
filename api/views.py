@@ -1,26 +1,25 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, views
 from rest_framework.response import Response
-from .models import Waiter, Cashier, Chef, Order, Customer, MenuItem, Foundation, Category
-from .serializers import WaiterSerializer, CashierSerializer, ChefSerializer, OrderSerializer, \
-    CustomerSerializer, MenuItemSerializer, FoundationSerializer, CategorySerializer
+from . import serializers, models
+# from .models import Waiter, Cashier, Chef, Order, Customer, MenuItem, Entity, Category
 
 
-class FoundationViewSet(viewsets.ModelViewSet):
+class EntityViewSet(viewsets.ModelViewSet):
     # permission_classes = [permissions.IsAuthenticated]
-    queryset = Foundation.objects.all()
-    serializer_class = FoundationSerializer
+    queryset = models.Entity.objects.all()
+    serializer_class = serializers.EntitySerializer
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     # queryset = Category.objects.all()
     # permission_classes = [permissions.IsAuthenticated]
-    serializer_class = CategorySerializer
+    serializer_class = serializers.CategorySerializer
 
     def get_queryset(self):
         # fnd_pk = self.request.fnd_pk
-        foundation_pk = self.kwargs['foundation_pk']
+        entity_pk = self.kwargs['entity_pk']
         # print(a)
-        return Category.objects.filter(foundation__pk=foundation_pk)
+        return models.Category.objects.filter(entity__pk=entity_pk)
     
     # def list(self, request, fnd_pk):
     #     qt = Category.objects.all()
@@ -30,35 +29,40 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class WaiterViewSet(viewsets.ModelViewSet):
-    queryset = Waiter.objects.all()
-    serializer_class = WaiterSerializer
+    queryset = models.Waiter.objects.all()
+    serializer_class = serializers.WaiterSerializer
 
 
 class CashierViewSet(viewsets.ModelViewSet):
-    queryset = Cashier.objects.all()
-    serializer_class = CashierSerializer
+    queryset = models.Cashier.objects.all()
+    serializer_class = serializers.CashierSerializer
 
 
 class ChefViewSet(viewsets.ModelViewSet):
-    queryset = Chef.objects.all()
-    serializer_class = ChefSerializer
+    queryset = models.Chef.objects.all()
+    serializer_class = serializers.ChefSerializer
 
 
 class OrderViewSet(viewsets.ModelViewSet):
     # permission_classes = [permissions.IsAuthenticated]
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+    queryset = models.Order.objects.all()
+    # serializer_class = serializers.OrderSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return serializers.CreateOrderSerializer
+        return serializers.OrderSerializer
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
-    queryset = Customer.objects.all()
-    serializer_class = CustomerSerializer
+    queryset = models.Customer.objects.all()
+    serializer_class = serializers.CustomerSerializer
 
 
 class MenuItemViewSet(viewsets.ModelViewSet):
     # permission_classes = [permissions.IsAuthenticated]
     # queryset = MenuItem.objects.all()
-    serializer_class = MenuItemSerializer
+    serializer_class = serializers.MenuItemSerializer
 
     def list(self, request, *args, **kwargs):
         category = request.query_params.get('category')
@@ -77,6 +81,5 @@ class MenuItemViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        foundation_pk = self.kwargs['foundation_pk']
-        return MenuItem.objects.filter(foundation__pk=foundation_pk)
-
+        entity_pk = self.kwargs['entity_pk']
+        return models.MenuItem.objects.filter(entity__pk=entity_pk)

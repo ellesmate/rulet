@@ -33,6 +33,8 @@ ALLOWED_HOSTS = ['192.168.1.4']
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
+
     'django_registration',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -138,4 +140,14 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',  # <-- And here
     ],
+}
+
+ASGI_APPLICATION = 'rulet.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('192.168.1.4', 6379)],
+        },
+    },
 }

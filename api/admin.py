@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # from .models import Place, Restaurant, Product, Ingredient, Employee, Order
-from .models import Waiter, Cashier, Chef, Order, Customer, Foundation, Category, MenuItem, OrderItem
+from .models import Waiter, Cashier, Chef, Order, Customer, Entity, Category, MenuItem, OrderItem
 
 
 admin.site.register(Waiter)
@@ -12,7 +12,7 @@ admin.site.register(Customer)
 admin.site.register(MenuItem)
 # admin.site.register(FoodItem)
 # admin.site.register(DrinkItem)
-admin.site.register(Foundation)
+admin.site.register(Entity)
 admin.site.register(Category)
 admin.site.register(OrderItem)
 
