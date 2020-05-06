@@ -68,36 +68,22 @@ class MenuItem(models.Model):
 class Customer(Account):
     pass
 
-
-class Order(models.Model):
-    entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, blank=True, null=True, on_delete=models.SET_NULL)
-    time = models.DateTimeField(auto_now_add=True)
-    # order_items = models.ManyToManyField(OrderItem)
-    take_out = models.BooleanField()
-
-
-class OrderItem(models.Model):
-    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
-    amount = models.IntegerField(validators=[MinValueValidator])
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-
-
 class Employee(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=30)
     middle_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    email = models.EmailField()
-    address = models.OneToOneField(Address, on_delete=models.CASCADE)
-    efficiency = models.OneToOneField(Efficiency, on_delete=models.CASCADE)
-    department = models.CharField(max_length=80)    # TODO: different object
-    position = models.CharField(max_length=80)
+    # email = models.EmailField()
+    address = models.OneToOneField(Address, on_delete=models.CASCADE, null=True, blank=True)
+    efficiency = models.OneToOneField(Efficiency, on_delete=models.CASCADE, null=True, blank=True)
+    department = models.CharField(max_length=80, blank=True)    # TODO: different object
+    position = models.CharField(max_length=80, blank=True)
 
 
 class Chef(Employee):
-    specialty = models.CharField(max_length=50)
+    specialty = models.CharField(max_length=50, blank=True)
     occupied = models.BooleanField()
-    current_order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
+    # current_order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
 
 
 class Cashier(Employee):
@@ -108,6 +94,39 @@ class Cashier(Employee):
 class Waiter(Cashier):
     field = models.CharField(max_length=30)
     currently_serving = models.BooleanField()
+
+
+class Order(models.Model):
+    entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, blank=True, null=True, on_delete=models.SET_NULL)
+    time = models.DateTimeField(auto_now_add=True)
+    # order_items = models.ManyToManyField(OrderItem)
+    take_out = models.BooleanField()
+
+
+class OrderItem(models.Model):
+    NEW = 'NEW'
+    COOKING = 'COO'
+    DELIVERING = 'DEL'
+    DONE = 'DON'
+    ORDER_STATES_CHOICES = (
+        (NEW, 'NEW'),
+        (COOKING, 'COOKING'),
+        (DELIVERING, 'DELIVERING'),
+        (DONE, 'DONE'),
+    )
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    cook = models.ForeignKey(Chef, blank=True, null=True, on_delete=models.SET_NULL)
+    amount = models.IntegerField(validators=[MinValueValidator])
+    wishes = models.CharField(max_length=200, blank=True)
+    status = models.CharField(
+        max_length=3,
+        choices=ORDER_STATES_CHOICES,
+        default=NEW
+    )
+
+
 
 
 class Manager(Employee):

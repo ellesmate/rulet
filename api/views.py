@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions, views
 from rest_framework.response import Response
 from . import serializers, models
+
 # from .models import Waiter, Cashier, Chef, Order, Customer, MenuItem, Entity, Category
 
 
@@ -48,10 +49,20 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = models.Order.objects.all()
     # serializer_class = serializers.OrderSerializer
 
+
     def get_serializer_class(self):
         if self.request.method == "POST":
             return serializers.CreateOrderSerializer
         return serializers.OrderSerializer
+    
+    def get_queryset(self):
+        entity_pk = self.kwargs['entity_pk']
+        
+        status = self.request.query_params.get('status')
+        if (status == 'active'):
+            return models.Order.objects.filter(entity__pk=entity_pk, status="DONE")
+
+        return models.Order.objects.filter(entity__pk=entity_pk)
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -61,7 +72,6 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
 class MenuItemViewSet(viewsets.ModelViewSet):
     # permission_classes = [permissions.IsAuthenticated]
-    # queryset = MenuItem.objects.all()
     serializer_class = serializers.MenuItemSerializer
 
     def list(self, request, *args, **kwargs):
