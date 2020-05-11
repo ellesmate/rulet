@@ -139,6 +139,8 @@ ACCOUNT_ACTIVATION_DAYS = 7  # One-week activation window
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',  # <-- And here
+        'rest_framework.authentication.SessionAuthentication',  
+        # 'rest_framework.authentication.BasicAuthentication',  
     ],
 }
 

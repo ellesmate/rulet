@@ -6,14 +6,14 @@ from . import serializers, models
 
 
 class EntityViewSet(viewsets.ModelViewSet):
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = models.Entity.objects.all()
     serializer_class = serializers.EntitySerializer
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     # queryset = Category.objects.all()
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = serializers.CategorySerializer
 
     def get_queryset(self):
@@ -45,9 +45,18 @@ class ChefViewSet(viewsets.ModelViewSet):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = models.Order.objects.all()
     # serializer_class = serializers.OrderSerializer
+
+    def create(self, request, *args, **kwargs):
+        # print(dir(request))
+        # print(request.user)
+        # print(dir(request.user))
+        request.data['customer'] = request.user
+        request.data['entity'] = kwargs['entity_pk']
+        
+        return super().create(request, *args, **kwargs)
 
 
     def get_serializer_class(self):
@@ -59,8 +68,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         entity_pk = self.kwargs['entity_pk']
         
         status = self.request.query_params.get('status')
-        if (status == 'active'):
-            return models.Order.objects.filter(entity__pk=entity_pk, status="DONE")
+        # if (status == 'active'):
+        #     return models.Order.objects.filter(entity__pk=entity_pk, status="DONE")
 
         return models.Order.objects.filter(entity__pk=entity_pk)
 

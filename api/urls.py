@@ -48,7 +48,7 @@ order_detail = views.OrderViewSet.as_view({
 
 urlpatterns = [
     # path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls')),
+    # path('api-auth/', include('rest_framework.urls')),
     path('entity/', entity_list, name='entity-list'),
     path('entity/<int:pk>/', entity_detail, name='entity-detail'),
     path('entity/<int:entity_pk>/category/', category_list, name='category-list'),

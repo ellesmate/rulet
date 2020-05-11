@@ -65,11 +65,13 @@ class MenuItem(models.Model):
 #     weight = models.IntegerField()
 
 
-class Customer(Account):
-    pass
+class Customer(models.Model):
+    account = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True)
+
 
 class Employee(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    account = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True)
+    entity = models.ForeignKey(Entity, on_delete=models.CASCADE, default=1)
     first_name = models.CharField(max_length=30)
     middle_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -79,29 +81,72 @@ class Employee(models.Model):
     department = models.CharField(max_length=80, blank=True)    # TODO: different object
     position = models.CharField(max_length=80, blank=True)
 
+    def __str__(self):
+        return f'{self.last_name} {self.first_name} {self.middle_name}'
 
-class Chef(Employee):
+
+class Chef(models.Model):
+    # employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True)
     specialty = models.CharField(max_length=50, blank=True)
     occupied = models.BooleanField()
     # current_order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
+    def __str__(self):
+        return str(self.employee) + " Chef"
 
 
-class Cashier(Employee):
+class Cashier(models.Model):
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True)
     terminalNo = models.IntegerField()
     sessionNo = models.IntegerField()
 
+    def __str__(self):
+        return str(self.employee) + " Cashier"
 
-class Waiter(Cashier):
+
+class Waiter(models.Model):
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True)
     field = models.CharField(max_length=30)
     currently_serving = models.BooleanField()
+    shift = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.employee) + " Waiter"
+
+class Courier(models.Model):
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True)
+    shift = models.BooleanField(default=False)
+    is_delivering = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.employee) + " Courier"
 
 
 class Order(models.Model):
+    NEW = 'NEW'
+    COOKING = 'COO'
+    DELIVERING = 'DEL'
+    DONE = 'DON'
+    ORDER_STATES_CHOICES = (
+        (NEW, 'NEW'),
+        (COOKING, 'COOKING'),
+        (DELIVERING, 'DELIVERING'),
+        (DONE, 'DONE'),
+    )
+
     entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, blank=True, null=True, on_delete=models.SET_NULL)
     time = models.DateTimeField(auto_now_add=True)
     # order_items = models.ManyToManyField(OrderItem)
     take_out = models.BooleanField()
+    waiter = models.ForeignKey(Waiter, blank=True, null=True, on_delete=models.SET_NULL)
+    address = models.CharField(max_length=80, blank=True)
+
+    status = models.CharField(
+        max_length=3,
+        choices=ORDER_STATES_CHOICES,
+        default=NEW
+    )
 
 
 class OrderItem(models.Model):
@@ -109,7 +154,7 @@ class OrderItem(models.Model):
     COOKING = 'COO'
     DELIVERING = 'DEL'
     DONE = 'DON'
-    ORDER_STATES_CHOICES = (
+    ORDER_ITEM_STATES_CHOICES = (
         (NEW, 'NEW'),
         (COOKING, 'COOKING'),
         (DELIVERING, 'DELIVERING'),
@@ -122,7 +167,7 @@ class OrderItem(models.Model):
     wishes = models.CharField(max_length=200, blank=True)
     status = models.CharField(
         max_length=3,
-        choices=ORDER_STATES_CHOICES,
+        choices=ORDER_ITEM_STATES_CHOICES,
         default=NEW
     )
 

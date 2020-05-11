@@ -1,10 +1,11 @@
 from django.contrib import admin
 
 # from .models import Place, Restaurant, Product, Ingredient, Employee, Order
-from .models import Waiter, Cashier, Chef, Order, Customer, Entity, Category, MenuItem, OrderItem
+from .models import Waiter, Cashier, Chef, Order, Customer, Entity, Category, MenuItem, OrderItem, Employee
 
 
 admin.site.register(Waiter)
+admin.site.register(Employee)
 admin.site.register(Cashier)
 admin.site.register(Chef)
 admin.site.register(Order)
