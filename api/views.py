@@ -1,9 +1,36 @@
-from rest_framework import viewsets, permissions, views
+from rest_framework import viewsets, permissions, views, mixins, status
 from rest_framework.response import Response
+from django.db.utils import IntegrityError
+from account.models import Account
+from account.serializer import AccountSerializer
+from account.views import send_confirmation
 from . import serializers, models
 
 # from .models import Waiter, Cashier, Chef, Order, Customer, MenuItem, Entity, Category
 
+class RegisterView(views.APIView):
+    def post(self, request, format=None):
+        data = request.data
+        email = data.get('email')
+        username = data.get('username')
+        password = data.get('password')
+        password2 = data.get('password2')
+
+        if email is None or username is None or password is None or password2 is None:
+            return Response({"error": 'There is empty fields.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if password != password2:
+            return Response({"error": 'Passwords have to match.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = Account.objects.create_user(email, username, password)
+        except IntegrityError as err:
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        send_confirmation(user)
+        serializer = AccountSerializer(instance=user)
+        return Response(serializer.data)
+    
 
 class EntityViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -46,13 +73,10 @@ class ChefViewSet(viewsets.ModelViewSet):
 
 class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
-    queryset = models.Order.objects.all()
-    # serializer_class = serializers.OrderSerializer
+    # queryset = models.Order.objects.all()
+    serializer_class = serializers.OrderSerializer
 
     def create(self, request, *args, **kwargs):
-        # print(dir(request))
-        # print(request.user)
-        # print(dir(request.user))
         request.data['customer'] = request.user
         request.data['entity'] = kwargs['entity_pk']
         
@@ -66,12 +90,54 @@ class OrderViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         entity_pk = self.kwargs['entity_pk']
-        
         status = self.request.query_params.get('status')
-        # if (status == 'active'):
-        #     return models.Order.objects.filter(entity__pk=entity_pk, status="DONE")
 
-        return models.Order.objects.filter(entity__pk=entity_pk)
+        queryset = models.Order.objects.filter(entity__pk=entity_pk)
+
+        if status is not None:
+            queryset = queryset.filter(status=status)
+        
+        return queryset
+
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        data = serializer.data
+        # order_status = request.query_params.get('status')
+        status = request.query_params.get('order_item_status')
+
+        if status is not None:
+            if status == 'NEW':
+                status = ('NEW', 'COO')
+            else:
+                status = (status)
+
+
+            new_data = []
+            for order in data:
+                items = order['orderitem_set']
+                filtered = []
+                order['orderitem_set'] = filtered
+
+                for order_item in items:
+                    if order_item['status'] in status:
+                        filtered.append(order_item)
+                if len(filtered) != 0:
+                    order['orderitem_set'] = filtered
+                    new_data.append(order)
+                elif 'DEL' in status:
+                    new_data.append(order)
+            data = new_data
+
+        return Response(data)
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -102,3 +168,4 @@ class MenuItemViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         entity_pk = self.kwargs['entity_pk']
         return models.MenuItem.objects.filter(entity__pk=entity_pk)
+

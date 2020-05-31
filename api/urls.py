@@ -44,6 +44,11 @@ order_detail = views.OrderViewSet.as_view({
     'get': 'retrieve',
 })
 
+waiter_list = views.WaiterViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
 
 
 urlpatterns = [
@@ -56,4 +61,6 @@ urlpatterns = [
     path('entity/<int:entity_pk>/menuitem/<int:pk>/', menuitem_detail, name='menuitem-detail'),
     path('entity/<int:entity_pk>/order/', order_list, name='order-list'),
     path('entity/<int:entity_pk>/order/<int:pk>/', order_detail, name='order-detail'),
+    path('waiter/', waiter_list, name='waiter-list'),
+    path('register/', views.RegisterView.as_view(), name='register')
 ]

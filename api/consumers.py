@@ -1,19 +1,23 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .serializers import OrderSerializer
+from .serializers import OrderSerializer, WaiterSerializer
 from api import models
 
 
 class WaiterConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.entity_name = self.scope['url_route']['kwargs']['entity']
-        self.entity_hall_name = f'hall_{self.entity_name}'
+        print(self.scope['user'])
         self.user = self.scope['user']
-        
-        if user.is_anonymous:
+
+        if self.user.is_anonymous:
             await self.close()
             return
+
+        await self.get_basic_user_info()
+
+        # self.entity_hall_name = f'hall_{self.entity.id}'
+        self.entity_hall_name = f'hall_{self.entity.pk}'
 
         await self.channel_layer.group_add(
             self.entity_hall_name,
@@ -21,6 +25,12 @@ class WaiterConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
+
+    @database_sync_to_async
+    def get_basic_user_info(self):
+        self.employee = self.user.employee
+        self.entity = self.employee.entity
+        self.waiter = self.employee.waiter
     
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
@@ -29,23 +39,49 @@ class WaiterConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
+        content = json.loads(text_data)
+        print(content)
 
-        await self.channel_layer.group_send(
-            self.entity_hall_name,
-            {
-                'type': 'notify_waiter',
-                'update': text_data_json
-            }
-        )
+        if content.get('delivered') is not None:
+            order_item = content['delivered']
+            print(order_item)
+            await self.change_order_item_status(order_item)
+        elif content.get('payed') is not None:
+            order = content['payed']
+            await self.change_order_status(order)
+
+        await self.send(text_data=text_data)
+
+        # await self.channel_layer.group_send(
+        #     self.entity_hall_name,
+        #     {
+        #         'type': 'notify_waiter',
+        #         'update': text_data_json
+        #     }
+        # )
+
+    @database_sync_to_async
+    def change_order_item_status(self, order_item):
+        db_order_item = models.OrderItem.objects.get(pk = order_item['id'])
+        if db_order_item.order.waiter == self.waiter:
+            db_order_item.status = order_item['status']
+            db_order_item.save()
+    
+    @database_sync_to_async
+    def change_order_status(self, order):
+        db_order = models.Order.objects.get(pk = order['id'])
+        if db_order.waiter == self.waiter:
+            db_order.status = order['status']
+            db_order.save()
 
     async def notify_waiter(self, event):
-        waiter = event['waiter']
-        order_item = event['order_item']
 
-        if self.user == waiter:
+        waiter = event['waiter']
+        order = event['order']
+
+        if self.waiter.pk == waiter['employee']:
             await self.send(text_data=json.dumps({
-                'order_item': order_item
+                'order': order
             }))
 
 
@@ -67,10 +103,9 @@ class CookConsumer(AsyncWebsocketConsumer):
         print(self.chef)
         
 
-        self.entity_kitchen_name = f'kitchen_1'
+        self.entity_kitchen_name = f'kitchen_{self.entity.pk}'
         print(self.scope['user'])
 
-        # Join room group
         await self.channel_layer.group_add(
             self.entity_kitchen_name,
             self.channel_name
@@ -85,26 +120,27 @@ class CookConsumer(AsyncWebsocketConsumer):
         self.chef = self.employee.chef
 
     async def disconnect(self, close_code):
-        # Leave room group
         await self.channel_layer.group_discard(
             self.entity_kitchen_name,
             self.channel_name
         )
 
-    # Receive message from WebSocket
-    async def receive_json(self, content):
+    async def receive(self, text_data):
+        content = json.loads(text_data)
         update = content['update']
+
+        print(update)
 
         order, order_item = await self.verify_received_data(update)
 
         if not order.take_out and order_item.status == 'DEL':
-            order_item, waiter = await self.allocate_waiter(order_item)
+            order_serializer, waiter_serializer = await self.allocate_waiter(order_item, order)
             await self.channel_layer.group_send(
-                f'hall_{self.entity.id}',
+                f'hall_{self.entity.pk}',
                 {
                     'type': 'notify_waiter',
-                    'order_item': order_item,
-                    'waiter': waiter
+                    'order': order_serializer,
+                    'waiter': waiter_serializer
                 }
             )
         elif order.take_out and order.status == 'DEL':
@@ -150,12 +186,11 @@ class CookConsumer(AsyncWebsocketConsumer):
 
     
     @database_sync_to_async
-    def allocate_waiter(self, order_item):
-        entity = order_item.entity
+    def allocate_waiter(self, order_item, order):
+        entity = order.entity
 
-        order = order_item.order
 
-        if order.waiter is not None:
+        if False and order.waiter is None:
             waiters = models.Waiter.objects.filter(account__entity=entity, shift=True)
             
             lucky = waiters[0]
@@ -168,14 +203,15 @@ class CookConsumer(AsyncWebsocketConsumer):
             
             order.waiter = lucky
             order.save()
-        
-        return order_item, self.user
 
-    # Receive message from room group
+        serializer = OrderSerializer(order)
+        waiter_serializer = WaiterSerializer(order.waiter)
+        
+        return serializer.data, waiter_serializer.data
+
     async def update_message(self, event):
         update = event['update']
 
-        # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'update': update
         }))

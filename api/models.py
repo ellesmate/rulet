@@ -106,12 +106,12 @@ class Cashier(models.Model):
 
 class Waiter(models.Model):
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True)
-    field = models.CharField(max_length=30)
+    field = models.CharField(max_length=30, blank=True)
     currently_serving = models.BooleanField()
     shift = models.BooleanField(default=False)
 
-    def __str__(self):
-        return str(self.employee) + " Waiter"
+    # def __str__(self):
+    #     return str(self.employee) + " Waiter"
 
 class Courier(models.Model):
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True)
@@ -139,7 +139,7 @@ class Order(models.Model):
     time = models.DateTimeField(auto_now_add=True)
     # order_items = models.ManyToManyField(OrderItem)
     take_out = models.BooleanField()
-    waiter = models.ForeignKey(Waiter, blank=True, null=True, on_delete=models.SET_NULL)
+    waiter = models.ForeignKey(Waiter, null=True, on_delete=models.SET_NULL)
     address = models.CharField(max_length=80, blank=True)
 
     status = models.CharField(
@@ -170,6 +170,9 @@ class OrderItem(models.Model):
         choices=ORDER_ITEM_STATES_CHOICES,
         default=NEW
     )
+
+    def __str__(self):
+        return f'{self.menu_item} | Status:{self.status}'
 
 
 

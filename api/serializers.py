@@ -89,6 +89,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class CreateOrderSerializer(serializers.ModelSerializer):
     # order_items = serializers.PrimaryKeyRelatedField(many=True, queryset=OrderItem.objects.all())
     orderitem_set = CreateOrderItemSerializer(many=True)
+    # waiter = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Order
         fields = '__all__'

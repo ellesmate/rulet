@@ -6,7 +6,7 @@ from rest_framework import serializers
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = '__all__'
+        fields = ['password', 'email', 'username']
 
 
 # class GroupSerializer(serializers.HyperlinkedModelSerializer):
