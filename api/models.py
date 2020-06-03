@@ -71,7 +71,7 @@ class Customer(models.Model):
 
 class Employee(models.Model):
     account = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True)
-    entity = models.ForeignKey(Entity, on_delete=models.CASCADE, default=1)
+    entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=30)
     middle_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -89,7 +89,7 @@ class Chef(models.Model):
     # employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True)
     specialty = models.CharField(max_length=50, blank=True)
-    occupied = models.BooleanField()
+    occupied = models.BooleanField(default=False)
     # current_order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
     def __str__(self):
         return str(self.employee) + " Chef"
@@ -107,7 +107,7 @@ class Cashier(models.Model):
 class Waiter(models.Model):
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE, primary_key=True)
     field = models.CharField(max_length=30, blank=True)
-    currently_serving = models.BooleanField()
+    currently_serving = models.BooleanField(default=False)
     shift = models.BooleanField(default=False)
 
     # def __str__(self):

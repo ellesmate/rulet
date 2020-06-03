@@ -1,94 +1,155 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="language" content="English">
-
-  <title>{{title}}</title>
-
-
-  <!-- bootstrap file -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <!-- bootstrap file-->
-
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-
-  <!-- main css -->
-  <link rel="stylesheet" type="text/css" href="{% static "account/index.css" %}" />
-
-
-  <!-- message here -->
-
-  {% if messages %}
-  {% for message in messages %}
-
-  <script>
-    alert("{{ message }}");
-  </script>
-
-  {% endfor %}
-  {% endif %}
-
-  <!--_______________________________________________-->
-
-
-
+  <title>Rulet Admin</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{% static "account/css/bootstrap.min.css" %}" />
+  <link rel="stylesheet" href="{% static "account/css/bootstrap-responsive.min.css" %}" />
+  <link rel="stylesheet" href="{% static "account/css/fullcalendar.css" %}" />
+  <link rel="stylesheet" href="{% static "account/css/matrix-style.css" %}" />
+  <link rel="stylesheet" href="{% static "account/css/matrix-media.css" %}" />
+  <link href="{% static "account/font-awesome/css/font-awesome.css" %}" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static "account/css/jquery.gritter.css" %}"/>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
 </head>
+<body>
 
-<body class="container-fluid">
+<!--Header-part-->
+<div id="header">
+  <h1><a href="dashboard.html">Rulet Admin</a></h1>
+</div>
+<!--close-Header-part--> 
 
-
-  <header class="row">
-
-    <!-- navbar-->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button class="navbar-toggle" data-toggle="collapse" data-target="#mainNavBar">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" class="styleheader" href="{% url "index" %}">project</a>
-        </div>
-        <div class="collapse navbar-collapse" id="mainNavBar">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="{% url "index" %}">Home</a></li>
-
-            {% if user.is_authenticated %}
-            <li><a href="{% url "logout" %}"><span class="glyphicon glyphicon-log-out"></span> &nbsp; Logout</a></li>
-            {% else %}
-            <li><a href="{% url "register" %}"><span class="glyphicon glyphicon-user"></span> &nbsp; Sign up</a></li>
-            <li><a href="{% url "login" %}"><span class="glyphicon glyphicon-log-in"></span> &nbsp; Log in</a></li>
-            {% endif %}
-
-          </ul>
-        </div>
-      </div>
-    </nav>
-  </header>
-  <br/>
-  <br>
-  <br>
-  <div class="row">
-    {% block start %}
+<!--top-Header-menu-->
+<div id="user-nav" class="navbar navbar-inverse ">
+  <ul class="nav">
     {% if user.is_authenticated %}
-    <center><h1>welcome, here</h1></center>
+    <li  class="dropdown" id="profile-messages" ><a title="" href="#" data-toggle="dropdown" data-target="#profile-messages"
+       class="dropdown-toggle"><i class="icon icon-user"></i>  <span class="text">{{ user.username }}</span><b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a href="{% url "logout" %}"><i class="icon-key"></i> Logout</a></li>
+      </ul>
+    </li>
+      <!-- <li><a href="{% url "logout" %}"><i class="icon-key"></i> Logout</a></li> -->
     {% else %}
-    <center><h1>log in, plz . . .</h1></center>
+      <li><a href="{% url "register" %}"><i class=""></i> Sign up</a></li>
+      <li><a href="{% url "login" %}"><i class="icon-key"></i> Login</a></li>
+      <!-- <li><a href="{% url "register" %}"><span class="glyphicon glyphicon-user"></span> &nbsp; Sign up</a></li> -->
     {% endif %}
-    {% endblock %}
-  </div>
-</body>
+  </ul>
+</div>
+<!--close-top-Header-menu-->
+<!--start-top-serch-->
+<!--close-top-serch-->
+<!--sidebar-menu-->
+<div id="sidebar"><a href="#" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>
+  <ul>
+    <li class="active"><a href="/"><i class="icon icon-home"></i> <span>Dashboard</span></a> </li>
+    <li> <a href="/category/"><i class="icon icon-filter"></i> <span>Categories</span></a> </li>
+    <li> <a href="/menu/"><i class="icon icon-th-list"></i> <span>Menu</span></a> </li>
+    <li><a href="/employee/"><i class="icon icon-user"></i> <span>Employee</span></a></li>
+  </ul>
+</div>
+<!--sidebar-menu-->
 
+<!--main-container-part-->
+<div id="content">
+<!--breadcrumbs-->
+  <div id="content-header">
+    <div id="breadcrumb"> <a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a></div>
+  </div>
+<!--End-breadcrumbs-->
+
+<!--Action boxes-->
+  <div class="container-fluid">
+    <div class="quick-actions_homepage">
+      <ul class="quick-actions">
+        <li class="bg_ls"> <a href="/"> <i class="icon-dashboard"></i> My Dashboard </a> </li>
+        <li class="bg_ly"> <a href="/category/"> <i class="icon-filter"></i> Categories </a> </li>
+        <li class="bg_lg"> <a href="/menu/"> <i class="icon-th-list"></i> Menu </a> </li>
+        <li class="bg_lo"> <a href="/employee/"> <i class="icon-user"></i> Employee </a> </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="quick-actions_homepage">
+      <ul class="quick-actions">
+        {% for z in ziped %}
+          <li class="bg_l{{z.1}}"> <a href="/menu/?category={{ z.0.id }}"><p><img src="/media/{{ z.0.image }}/" width="100px" /></p><p>{{ z.0.name }}</p></a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+
+<!-- <div class="row">
+  {% block start %}
+  {% if user.is_authenticated %}
+  <center><h1>welcome, here</h1></center>
+  {% else %}
+  <center><h1>log in, plz . . .</h1></center>
+  {% endif %}
+  {% endblock %}
+</div> -->
+
+<!--end-main-container-part-->
+
+<!--Footer-part-->
+
+<div class="row-fluid">
+  <div id="footer" class="span12"> 2020 &copy; Rulet. Loboda Kirill </div>
+</div>
+
+<!--end-Footer-part-->
+
+<script src="{% static "account/js/excanvas.min.js" %}"></script> 
+<script src="{% static "account/js/jquery.min.js" %}"></script> 
+<script src="{% static "account/js/jquery.ui.custom.js" %}"></script> 
+<script src="{% static "account/js/bootstrap.min.js" %}"></script> 
+<script src="{% static "account/js/jquery.flot.min.js" %}"></script> 
+<script src="{% static "account/js/jquery.flot.resize.min.js" %}"></script> 
+<script src="{% static "account/js/jquery.peity.min.js" %}"></script> 
+<script src="{% static "account/js/fullcalendar.min.js" %}"></script> 
+<script src="{% static "account/js/matrix.js" %}"></script> 
+<script src="{% static "account/js/matrix.dashboard.js" %}"></script> 
+<script src="{% static "account/js/jquery.gritter.min.js" %}"></script> 
+<script src="{% static "account/js/matrix.interface.js" %}"></script> 
+<script src="{% static "account/js/matrix.chat.js" %}"></script> 
+<script src="{% static "account/js/jquery.validate.js" %}"></script> 
+<script src="{% static "account/js/matrix.form_validation.js" %}"></script> 
+<script src="{% static "account/js/jquery.wizard.js" %}"></script> 
+<script src="{% static "account/js/jquery.uniform.js" %}"></script> 
+<script src="{% static "account/js/select2.min.js" %}"></script> 
+<script src="{% static "account/js/matrix.popover.js" %}"></script> 
+<script src="{% static "account/js/jquery.dataTables.min.js" %}"></script> 
+<script src="{% static "account/js/matrix.tables.js" %}"></script> 
+
+<script type="text/javascript">
+  // This function is called from the pop-up menus to transfer to
+  // a different page. Ignore if the value returned is a null string:
+  function goPage (newURL) {
+
+      // if url is empty, skip the menu dividers and reset the menu selection to default
+      if (newURL != "") {
+      
+          // if url is "-", it is this page -- reset the menu:
+          if (newURL == "-" ) {
+              resetMenu();            
+          } 
+          // else, send page to designated URL            
+          else {  
+            document.location.href = newURL;
+          }
+      }
+  }
+
+// resets the menu selection upon entry to this page:
+function resetMenu() {
+   document.gomenu.selector.selectedIndex = 2;
+}
+</script>
+</body>
 </html>

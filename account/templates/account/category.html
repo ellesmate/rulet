@@ -1,0 +1,143 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Rulet Admin</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="{% static "account/css/bootstrap.min.css" %}" />
+<link rel="stylesheet" href="{% static "account/css/bootstrap-responsive.min.css" %}" />
+<link rel="stylesheet" href="{% static "account/css/matrix-style.css" %}" />
+<link rel="stylesheet" href="{% static "account/css/matrix-media.css" %}" />
+<link href="{% static "account/font-awesome/css/font-awesome.css" %}" rel="stylesheet" />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+</head>
+<body>
+
+<!--Header-part-->
+<div id="header">
+  <h1><a href="dashboard.html">Rulet Admin</a></h1>
+</div>
+<!--close-Header-part--> 
+
+<!--top-Header-menu-->
+<div id="user-nav" class="navbar navbar-inverse ">
+  <ul class="nav">
+    {% if user.is_authenticated %}
+    <li  class="dropdown" id="profile-messages" ><a title="" href="#" data-toggle="dropdown" data-target="#profile-messages"
+       class="dropdown-toggle"><i class="icon icon-user"></i>  <span class="text">{{ user.username }}</span><b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a href="{% url "logout" %}"><i class="icon-key"></i> Logout</a></li>
+      </ul>
+    </li>
+      <!-- <li><a href="{% url "logout" %}"><i class="icon-key"></i> Logout</a></li> -->
+    {% else %}
+      <li><a href="{% url "register" %}"><i class=""></i> Sign up</a></li>
+      <li><a href="{% url "login" %}"><i class="icon-key"></i> Login</a></li>
+      <!-- <li><a href="{% url "register" %}"><span class="glyphicon glyphicon-user"></span> &nbsp; Sign up</a></li> -->
+    {% endif %}
+  </ul>
+</div>
+
+<!--start-top-serch-->
+<!--close-top-serch--> 
+
+<!--sidebar-menu-->
+<div id="sidebar"> <a href="#" class="visible-phone"><i class="icon icon-inbox"></i> Widgets</a>
+  <ul>
+    <li><a href="/"><i class="icon icon-home"></i> <span>Dashboard</span></a> </li>
+    <li class="active"> <a href="/category/"><i class="icon icon-signal"></i> <span>Categories</span></a> </li>
+    <li> <a href="/menu/"><i class="icon icon-inbox"></i> <span>Menu</span></a> </li>
+    <li><a href="/employee/"><i class="icon icon-th"></i> <span>Employee</span></a></li>
+  </ul>
+</div>
+<!--sidebar-menu-->
+
+<!--main-container-part-->
+<div id="content">
+  <div id="content-header">
+    <div id="breadcrumb"> <a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a href="#" class="current">Widgets</a> </div>
+    <h1>Widgets</h1>
+  </div>
+  <div class="container-fluid">
+    <hr>
+    <div class="row-fluid">
+      <div class="span12">
+        <div class="widget-box">
+          <div class="widget-title"> <span class="icon"> <i class="icon-file"></i> </span>
+            <h5>Recent Posts</h5>
+          </div>
+          <div class="widget-content nopadding">
+            <ul class="recent-posts">
+              {% for category in categories %}
+                <li>
+                  <div class="user-thumb"> <img width="40" height="40" alt="Menu item" src="../media/{{category.image}}"> </div>
+                  <div class="article-post">
+                    <div class="fr">
+                      <a href="{{ category.id }}" class="btn btn-primary btn-mini">Edit</a> 
+                      <a href="#" class="btn btn-success btn-mini">Publish</a>
+                      <form action="{{ category.id }}/" method="POST" class="form-horizontal" style="display: inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="btn btn-danger btn-mini">Delete</button>
+                      </form> 
+                    </div>
+                    <span class="user-info"> Type: {{ category.name }} </span>
+                    <p><a href="/menu/?category={{ category.id }}">{{ category.name }}</a> </p>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+  </div>
+<!--main-container-part-->
+
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span12">
+
+      <div class="widget-box">
+        <div class="widget-title"> <span class="icon"> <i class="icon-align-justify"></i> </span>
+          <h5>New menu item</h5>
+        </div>
+        <div class="widget-content nopadding">
+          <form action="" method="POST" enctype="multipart/form-data" class="form-horizontal">
+            {% csrf_token %}
+            <div class="control-group">
+              <label class="control-label">Name :</label>
+              <div class="controls">
+                <input type="text" name="name" id="id_name" class="span11" placeholder="Name" />
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">Image :</label>
+              <div class="controls">
+                <input type="file" name="image" accept="image/*" id="id_image" />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-success">Create</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<!--Footer-part-->
+<div class="row-fluid">
+  <div id="footer" class="span12"> 2020 &copy; Rulet. Loboda Kirill </div>
+</div>
+<!--end-Footer-part-->
+<script src="{% static "account/js/jquery.min.js" %}"></script> 
+<script src="{% static "account/js/bootstrap.min.js" %}"></script> 
+<script src="{% static "account/js/jquery.ui.custom.js" %}"></script> 
+<script src="{% static "account/js/matrix.js" %}"></script>
+</body>
+</html>

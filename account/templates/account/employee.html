@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Rulet Admin</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="{% static "account/css/bootstrap.min.css" %}" />
+<link rel="stylesheet" href="{% static "account/css/bootstrap-responsive.min.css" %}" />
+<link rel="stylesheet" href="{% static "account/css/matrix-style.css" %}" />
+<link rel="stylesheet" href="{% static "account/css/matrix-media.css" %}" />
+<link href="{% static "account/font-awesome/css/font-awesome.css" %}" rel="stylesheet" />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+</head>
+<body>
+
+<!--Header-part-->
+<div id="header">
+  <h1><a href="dashboard.html">Rulet Admin</a></h1>
+</div>
+<!--close-Header-part--> 
+
+<!--top-Header-menu-->
+<div id="user-nav" class="navbar navbar-inverse ">
+  <ul class="nav">
+    {% if user.is_authenticated %}
+    <li  class="dropdown" id="profile-messages" ><a title="" href="#" data-toggle="dropdown" data-target="#profile-messages"
+       class="dropdown-toggle"><i class="icon icon-user"></i>  <span class="text">{{ user.username }}</span><b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a href="{% url "logout" %}"><i class="icon-key"></i> Logout</a></li>
+      </ul>
+    </li>
+      <!-- <li><a href="{% url "logout" %}"><i class="icon-key"></i> Logout</a></li> -->
+    {% else %}
+      <li><a href="{% url "register" %}"><i class=""></i> Sign up</a></li>
+      <li><a href="{% url "login" %}"><i class="icon-key"></i> Login</a></li>
+      <!-- <li><a href="{% url "register" %}"><span class="glyphicon glyphicon-user"></span> &nbsp; Sign up</a></li> -->
+    {% endif %}
+  </ul>
+</div>
+
+<!--start-top-serch-->
+<!--close-top-serch--> 
+
+<!--sidebar-menu-->
+<div id="sidebar"> <a href="#" class="visible-phone"><i class="icon icon-inbox"></i> Widgets</a>
+  <ul>
+    <li><a href="/"><i class="icon icon-home"></i> <span>Dashboard</span></a> </li>
+    <li> <a href="/category/"><i class="icon icon-signal"></i> <span>Categories</span></a> </li>
+    <li> <a href="/menu/"><i class="icon icon-inbox"></i> <span>Menu</span></a> </li>
+    <li class="active"><a href="/employee/"><i class="icon icon-th"></i> <span>Employee</span></a></li>
+  </ul>
+</div>
+<!--sidebar-menu-->
+<!--main-container-part-->
+<div id="content">
+  <div id="content-header">
+    <div id="breadcrumb"> <a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a href="#" class="current">Widgets</a> </div>
+    <h1>Widgets</h1>
+  </div>
+  <div class="container-fluid">
+    <hr>
+    <div class="row-fluid">
+      <div class="span6">
+        <div class="widget-box">
+          <div class="widget-title"> <span class="icon"> <i class="icon-file"></i> </span>
+            <h5>Waiters</h5>
+          </div>
+          <div class="widget-content nopadding">
+            <ul class="recent-posts">
+              {% for waiter in waiters %}
+              <li>
+                <div class="user-thumb"> <img width="40" height="40" alt="User" src="/media/user.jpg"> </div>
+                <div class="article-post">
+                  <div class="fr">
+                    <a href="#" class="btn btn-primary btn-mini">Edit</a> 
+                    <a href="#" class="btn btn-success btn-mini">Publish</a> 
+                    <form action="{{ waiter.pk }}/" method="POST" class="form-horizontal" style="display: inline">
+                      {% csrf_token %}
+                      <input type="hidden" name="_method" value="DELETE">
+                      <button type="submit" class="btn btn-danger btn-mini">Delete</button>
+                    </form> 
+                  </div>
+                  <span class="user-info"> {{ waiter.employee.first_name }} {{ waiter.employee.middle_name }} {{ waiter.employee.last_name }} </span>
+                  <p><a href="#">{{ waiter.employee.account.date_joined }}</a> </p>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="span6">
+        <div class="widget-box">
+          <div class="widget-title"> <span class="icon"> <i class="icon-file"></i> </span>
+            <h5>Cooks</h5>
+          </div>
+          <div class="widget-content nopadding">
+            <ul class="recent-posts">
+              {% for cook in cooks %}
+              <li>
+                <div class="user-thumb"> <img width="40" height="40" alt="User" src="/media/user.jpg"> </div>
+                <div class="article-post">
+                  <div class="fr">
+                    <a href="#" class="btn btn-primary btn-mini">Edit</a> 
+                    <a href="#" class="btn btn-success btn-mini">Publish</a> 
+                    <form action="{{ cook.pk }}/" method="POST" class="form-horizontal" style="display: inline">
+                      {% csrf_token %}
+                      <input type="hidden" name="_method" value="DELETE">
+                      <button type="submit" class="btn btn-danger btn-mini">Delete</button>
+                    </form> 
+                  </div>
+                  <span class="user-info"> {{ cook.employee.first_name }} {{ cook.employee.middle_name }} {{ cook.employee.last_name }} </span>
+                  <p><a href="#">{{ cook.employee.account.date_joined }}</a> </p>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+  </div>
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span12">
+
+      <div class="widget-box">
+        <div class="widget-title"> <span class="icon"> <i class="icon-align-justify"></i> </span>
+          <h5>New menu item</h5>
+        </div>
+        <div class="widget-content nopadding">
+          <form action="" method="POST" enctype="multipart/form-data" class="form-horizontal">
+            {% csrf_token %}
+            <div class="control-group">
+              <label class="control-label">Email :</label>
+              <div class="controls">
+                <input type="text" name="email" id="id_email" class="span11" placeholder="Email" />
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">First name :</label>
+              <div class="controls">
+                <input type="text" name="first_name" id="id_first_name" class="span11" placeholder="First name" />
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">Middle name :</label>
+              <div class="controls">
+                <input type="text" name="middle_name" id="id_middle_name" class="span11" placeholder="Middle name" />
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">Last name :</label>
+              <div class="controls">
+                <input type="text" name="last_name" id="id_last_name" class="span11" placeholder="Last name" />
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">Position :</label>
+              <div class="controls">
+                <select name="position" required id="id_position">
+                  <option value="waiter">Waiter</option>
+                  <option value="cook">Cook</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-success">Create</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!--main-container-part-->
+
+<!--Footer-part-->
+<div class="row-fluid">
+  <div id="footer" class="span12"> 2020 &copy; Rulet. Loboda Kirill </div>
+</div>
+<!--end-Footer-part-->
+<script src="{% static "account/js/jquery.min.js" %}"></script> 
+<script src="{% static "account/js/bootstrap.min.js" %}"></script> 
+<script src="{% static "account/js/jquery.ui.custom.js" %}"></script> 
+<script src="{% static "account/js/matrix.js" %}"></script>
+</body>
+</html>

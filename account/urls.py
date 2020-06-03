@@ -15,4 +15,10 @@ urlpatterns = [
     re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),
     path('', views.index, name ='index'), 
+    path('menu/', views.MenuItemView.as_view(), name ='menu'), 
+    path('menu/<int:pk>/', views.MenuItemDetailView.as_view(), name ='menu-detail'), 
+    path('category/', views.CategoryView.as_view(), name ='category'), 
+    path('category/<int:pk>/', views.CategoryDetailView.as_view(), name ='category-detail'), 
+    path('employee/', views.EmployeeView.as_view(), name='employee'),
+    path('employee/<int:pk>/', views.EmployeeDetailView.as_view(), name='employee-detail'),
 ]

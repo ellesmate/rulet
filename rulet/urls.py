@@ -37,7 +37,7 @@ urlpatterns = [
     # Registration
     path('', include('account.urls')), 
     path('login/', account_views.Login, name ='login'), 
-    path('logout/', auth.LogoutView.as_view(template_name ='account/index.html'), name ='logout'), 
+    path('logout/', auth.LogoutView.as_view(template_name ='account/login.html'), name ='logout'), 
     path('register/', account_views.register, name ='register'), 
 ]
 
