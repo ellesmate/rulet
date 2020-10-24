@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <title>Matrix Admin</title><meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static "adminweb/css/bootstrap.min.css" %}" />
+    <link rel="stylesheet" href="{% static "adminweb/css/bootstrap-responsive.min.css" %}" />
+    <link rel="stylesheet" href="{% static "adminweb/css/matrix-login.css" %}" />
+    <link href="{% static "adminweb/font-awesome/css/font-awesome.css" %}" rel="stylesheet" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+
+</head>
+<body>
+    <div id="loginbox">            
+        <form method="POST" id="loginform" action="{% url "login" %}" class="form-vertical">
+            {% csrf_token %}
+            <div class="control-group normal_text"> <h3><img src="{% static "adminweb/img/logo.png" %}" alt="Logo" /></h3></div>
+            <div class="control-group">
+                <div class="controls">
+                    <div class="main_input_box">
+                        <span class="add-on bg_lg"><i class="icon-user"> </i></span><input type="text" name="username" required placeholder="Email" />
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <div class="main_input_box">
+                        <span class="add-on bg_ly"><i class="icon-lock"></i></span><input type="password" name="password" required placeholder="Password" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <span class="pull-left"><a href="#" class="flip-link btn btn-info" id="to-recover">Sign up</a></span>
+                <span class="pull-right"><a><input type="submit" class="btn btn-success" value="Login" /></a></span>
+            </div>
+        </form>
+
+        <form method="POST" id="recoverform" action="{% url "register" %}" class="form-vertical">
+            {% csrf_token %}
+            <div class="control-group">
+                <div class="controls">
+                    <div class="main_input_box">
+                        <span class="add-on bg_lg"><i class="icon-user"> </i></span><input type="text" name="username" required placeholder="Username" />
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <div class="main_input_box">
+                        <span class="add-on bg_lg"><i class="icon-envelope"> </i></span><input type="text" name="email" required placeholder="Email" />
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <div class="main_input_box">
+                        <span class="add-on bg_ly"><i class="icon-lock"></i></span><input type="password" name="password1" required placeholder="Password" />
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <div class="main_input_box">
+                        <span class="add-on bg_ly"><i class="icon-lock"></i></span><input type="password" name="password2" required placeholder="Password confirmation" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <span class="pull-left"><a href="#" class="flip-link btn btn-success" id="to-login">&laquo; Back to login</a></span>
+                <span class="pull-right"><a><input type="submit" class="btn btn-success" value="Register" /></a></span>
+            </div>
+    </div>
+    
+    <script src="{% static "adminweb/js/jquery.min.js" %}"></script>  
+    <script src="{% static "adminweb/js/matrix.login.js" %}"></script> 
+</body>
+
+</html>

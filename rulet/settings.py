@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'api.apps.ApiConfig',
     'account.apps.AccountConfig',
+    'adminweb.apps.AdminwebConfig',
 ]
 
 MIDDLEWARE = [

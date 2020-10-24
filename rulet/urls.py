@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from rest_framework.authtoken.views import obtain_auth_token
 
 # Registration
-from account import views as account_views 
+from adminweb import views as account_views 
 from django.contrib.auth import views as auth 
 
 urlpatterns = [
@@ -35,9 +35,10 @@ urlpatterns = [
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 
     # Registration
+    path('', include('adminweb.urls')), 
     path('', include('account.urls')), 
     path('login/', account_views.Login, name ='login'), 
-    path('logout/', auth.LogoutView.as_view(template_name ='account/login.html'), name ='logout'), 
+    path('logout/', auth.LogoutView.as_view(template_name ='adminweb/login.html'), name ='logout'), 
     path('register/', account_views.register, name ='register'), 
 ]
 

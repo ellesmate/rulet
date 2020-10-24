@@ -7,9 +7,3 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = ['id', 'password', 'email', 'username']
-
-
-# class GroupSerializer(serializers.HyperlinkedModelSerializer):
-#     class Meta:
-#         model = Group
-#         fields = ['url', 'name']
