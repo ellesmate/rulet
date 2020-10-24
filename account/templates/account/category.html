@@ -1,60 +1,12 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Rulet Admin</title>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="{% static "account/css/bootstrap.min.css" %}" />
-<link rel="stylesheet" href="{% static "account/css/bootstrap-responsive.min.css" %}" />
-<link rel="stylesheet" href="{% static "account/css/matrix-style.css" %}" />
-<link rel="stylesheet" href="{% static "account/css/matrix-media.css" %}" />
-<link href="{% static "account/font-awesome/css/font-awesome.css" %}" rel="stylesheet" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
-</head>
-<body>
+{% extends "base.html" %}
 
-<!--Header-part-->
-<div id="header">
-  <h1><a href="dashboard.html">Rulet Admin</a></h1>
-</div>
-<!--close-Header-part--> 
+{% block sidebar %}
+  {% with 'category' as active_tab %}
+    {{block.super}}
+  {% endwith %}
+{% endblock sidebar %}
 
-<!--top-Header-menu-->
-<div id="user-nav" class="navbar navbar-inverse ">
-  <ul class="nav">
-    {% if user.is_authenticated %}
-    <li  class="dropdown" id="profile-messages" ><a title="" href="#" data-toggle="dropdown" data-target="#profile-messages"
-       class="dropdown-toggle"><i class="icon icon-user"></i>  <span class="text">{{ user.username }}</span><b class="caret"></b></a>
-      <ul class="dropdown-menu">
-        <li><a href="{% url "logout" %}"><i class="icon-key"></i> Logout</a></li>
-      </ul>
-    </li>
-      <!-- <li><a href="{% url "logout" %}"><i class="icon-key"></i> Logout</a></li> -->
-    {% else %}
-      <li><a href="{% url "register" %}"><i class=""></i> Sign up</a></li>
-      <li><a href="{% url "login" %}"><i class="icon-key"></i> Login</a></li>
-      <!-- <li><a href="{% url "register" %}"><span class="glyphicon glyphicon-user"></span> &nbsp; Sign up</a></li> -->
-    {% endif %}
-  </ul>
-</div>
-
-<!--start-top-serch-->
-<!--close-top-serch--> 
-
-<!--sidebar-menu-->
-<div id="sidebar"> <a href="#" class="visible-phone"><i class="icon icon-inbox"></i>{{ title }}</a>
-  <ul>
-    <li><a href="/"><i class="icon icon-home"></i> <span>Dashboard</span></a> </li>
-    <li class="active"> <a href="/category/"><i class="icon icon-signal"></i> <span>Categories</span></a> </li>
-    <li> <a href="/menu/"><i class="icon icon-inbox"></i> <span>Menu</span></a> </li>
-    <li><a href="/employee/"><i class="icon icon-th"></i> <span>Employee</span></a></li>
-  </ul>
-</div>
-<!--sidebar-menu-->
-
-<!--main-container-part-->
-<div id="content">
+{% block content %}
   <div id="content-header">
     <div id="breadcrumb"> <a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a href="#" class="current">Categories</a> </div>
     <h1>Categories</h1>
@@ -94,7 +46,6 @@
     </div>
     <hr>
   </div>
-<!--main-container-part-->
 
 <div class="container-fluid">
   <div class="row-fluid">
@@ -110,13 +61,13 @@
             <div class="control-group">
               <label class="control-label">Name :</label>
               <div class="controls">
-                <input type="text" name="name" id="id_name" class="span11" placeholder="Name" />
+                <input type="text" name="name" class="span11" placeholder="Name" />
               </div>
             </div>
             <div class="control-group">
               <label class="control-label">Image :</label>
               <div class="controls">
-                <input type="file" name="image" accept="image/*" id="id_image" />
+                <input type="file" name="image" accept="image/*" />
               </div>
             </div>
             <div class="form-actions">
@@ -128,16 +79,5 @@
     </div>
   </div>
 </div>
+{% endblock content %}
 
-</div>
-<!--Footer-part-->
-<div class="row-fluid">
-  <div id="footer" class="span12"> 2020 &copy; Rulet. Loboda Kirill </div>
-</div>
-<!--end-Footer-part-->
-<script src="{% static "account/js/jquery.min.js" %}"></script> 
-<script src="{% static "account/js/bootstrap.min.js" %}"></script> 
-<script src="{% static "account/js/jquery.ui.custom.js" %}"></script> 
-<script src="{% static "account/js/matrix.js" %}"></script>
-</body>
-</html>

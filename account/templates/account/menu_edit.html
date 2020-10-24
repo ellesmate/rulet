@@ -1,174 +1,95 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Rulet Admin</title>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="{% static "account/css/bootstrap.min.css" %}" />
-<link rel="stylesheet" href="{% static "account/css/bootstrap-responsive.min.css" %}" />
-<link rel="stylesheet" href="{% static "account/css/colorpicker.css" %}" />
-<link rel="stylesheet" href="{% static "account/css/datepicker.css" %}" />
-<link rel="stylesheet" href="{% static "account/css/uniform.css" %}" />
-<link rel="stylesheet" href="{% static "account/css/select2.css" %}" />
-<link rel="stylesheet" href="{% static "account/css/matrix-style.css" %}" />
-<link rel="stylesheet" href="{% static "account/css/matrix-media.css" %}" />
-<link rel="stylesheet" href="{% static "account/css/bootstrap-wysihtml5.css" %}" />
-<link href="{% static "account/font-awesome/css/font-awesome.css" %}" rel="stylesheet" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
-</head>
-<body>
+{% extends "base.html" %}
 
-<!--Header-part-->
-<div id="header">
-  <h1><a href="dashboard.html">Rulet Admin</a></h1>
-</div>
-<!--close-Header-part--> 
+{% block sidebar %}
+  {% with 'menu' as active_tab %}
+    {{block.super}}
+  {% endwith %}
+{% endblock sidebar %}
 
-<!--top-Header-menu-->
-<div id="user-nav" class="navbar navbar-inverse ">
-  <ul class="nav">
-    {% if user.is_authenticated %}
-    <li  class="dropdown" id="profile-messages" ><a title="" href="#" data-toggle="dropdown" data-target="#profile-messages"
-       class="dropdown-toggle"><i class="icon icon-user"></i>  <span class="text">{{ user.username }}</span><b class="caret"></b></a>
-      <ul class="dropdown-menu">
-        <li><a href="{% url "logout" %}"><i class="icon-key"></i> Logout</a></li>
-      </ul>
-    </li>
-      <!-- <li><a href="{% url "logout" %}"><i class="icon-key"></i> Logout</a></li> -->
-    {% else %}
-      <li><a href="{% url "register" %}"><i class=""></i> Sign up</a></li>
-      <li><a href="{% url "login" %}"><i class="icon-key"></i> Login</a></li>
-      <!-- <li><a href="{% url "register" %}"><span class="glyphicon glyphicon-user"></span> &nbsp; Sign up</a></li> -->
-    {% endif %}
-  </ul>
-</div>
+{% block content %}
+  <div id="content-header">
+    <div id="breadcrumb"> <a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a href="#" class="tip-bottom">Menu</a> <a href="#" class="current">{{ title }}</a> </div>
+    <h1>{{title}}</h1>
+  </div>
+  <div class="container-fluid">
+    <hr>
+    <div class="row-fluid">
+      <div class="span12">
 
-<!--start-top-serch-->
-<!--close-top-serch--> 
-
-<!--sidebar-menu-->
-
-<div id="sidebar"> <a href="#" class="visible-phone"><i class="icon icon-list"></i>Forms</a>
-  <ul>
-    <li><a href="/"><i class="icon icon-home"></i> <span>Dashboard</span></a> </li>
-    <li> <a href="/category/"><i class="icon icon-signal"></i> <span>Categories</span></a> </li>
-    <li class="active"> <a href="/menu/"><i class="icon icon-inbox"></i> <span>Menu</span></a> </li>
-    <li><a href="/employee/"><i class="icon icon-th"></i> <span>Employee</span></a></li>
-  </ul>
-</div>
-
-<!--close-left-menu-stats-sidebar-->
-
-<div id="content">
-<div id="content-header">
-  <div id="breadcrumb"> <a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a href="#" class="tip-bottom">Menu</a> <a href="#" class="current">{{ title }}</a> </div>
-  <h1>{{title}}</h1>
-</div>
-<div class="container-fluid">
-  <hr>
-  <div class="row-fluid">
-    <div class="span12">
-
-      <div class="widget-box">
-        <div class="widget-title"> <span class="icon"> <i class="icon-align-justify"></i> </span>
-          <h5>Menu item</h5>
-        </div>
-        <div class="widget-content nopadding">
-          <form action="" method="POST" enctype="multipart/form-data" class="form-horizontal">
-            {% csrf_token %}
-            <div class="control-group">
-              <label class="control-label">Type :</label>
-              <div class="controls">
-                <input type="text" name="item_type" id="id_item_type" class="span11" placeholder="Type" value="{{ menuitem.item_type }}" />
+        <div class="widget-box">
+          <div class="widget-title"> <span class="icon"> <i class="icon-align-justify"></i> </span>
+            <h5>Menu item</h5>
+          </div>
+          <div class="widget-content nopadding">
+            <form action="" method="POST" enctype="multipart/form-data" class="form-horizontal">
+              {% csrf_token %}
+              <div class="control-group">
+                <label class="control-label">Type :</label>
+                <div class="controls">
+                  <input type="text" name="item_type" id="id_item_type" class="span11" placeholder="Type" value="{{ menuitem.item_type }}" />
+                </div>
               </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label">Category :</label>
-              <div class="controls">
-                <select name="category" required id="id_category">
-                  {% for category in categories %}
-                    {% if menuitem.category == category %}
-                      <option value="{{ category.id }}" selected>{{ category.name }}</option>
+              <div class="control-group">
+                <label class="control-label">Category :</label>
+                <div class="controls">
+                  <select name="category" required id="id_category">
+                    {% for category in categories %}
+                      {% if menuitem.category == category %}
+                        <option value="{{ category.id }}" selected>{{ category.name }}</option>
+                      {% else %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label">Price :</label>
+                <div class="controls">
+                  <input type="number" name="price" id="id_price" required class="span11" placeholder="Price" value="{{ menuitem.price }}" />
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label">Size :</label>
+                <div class="controls">
+                  <input type="number" name="size" id="id_size" required class="span11" placeholder="Size" value="{{ menuitem.size }}"  />
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label">Available :</label>
+                <div class="controls">
+                  <label>
+                    {% if menuitem.available %}
+                      <input type="checkbox" name="available" id="id_available" checked />
                     {% else %}
-                      <option value="{{ category.id }}">{{ category.name }}</option>
+                      <input type="checkbox" name="available" id="id_available" />
                     {% endif %}
-                  {% endfor %}
-                </select>
+                    </label>
               </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label">Price :</label>
-              <div class="controls">
-                <input type="number" name="price" id="id_price" required class="span11" placeholder="Price" value="{{ menuitem.price }}" />
+              <div class="control-group">
+                <label class="control-label">Image :</label>
+                <div class="controls">
+                  <span>Current image:</span>
+                  <a href="/media/{{ menuitem.image }}">{{ menuitem.image }}</a>
+                </div>
+                <div class="controls">
+                  <input type="file" name="image" accept="image/*" id="id_image" />
+                </div>
               </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label">Size :</label>
-              <div class="controls">
-                <input type="number" name="size" id="id_size" required class="span11" placeholder="Size" value="{{ menuitem.size }}"  />
+              <div class="control-group">
+                <label class="control-label">Description field :</label>
+                <div class="controls">
+                  <input type="text" name="item_description" id="id_item_description" class="span11" value="{{ menuitem.item_description }}" />
+                  <span class="help-block">Description field</span> </div>
               </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label">Available :</label>
-              <div class="controls">
-                <label>
-                  {% if menuitem.available %}
-                    <input type="checkbox" name="available" id="id_available" checked />
-                  {% else %}
-                    <input type="checkbox" name="available" id="id_available" />
-                  {% endif %}
-                  </label>
-            </div>
-            <div class="control-group">
-              <label class="control-label">Image :</label>
-              <div class="controls">
-                <span>Current image:</span>
-                <a href="/media/{{ menuitem.image }}">{{ menuitem.image }}</a>
+              <div class="form-actions">
+                <input type="hidden" name="_method" value="POST">
+                <button type="submit" class="btn btn-success">Save</button>
               </div>
-              <div class="controls">
-                <input type="file" name="image" accept="image/*" id="id_image" />
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label">Description field :</label>
-              <div class="controls">
-                <input type="text" name="item_description" id="id_item_description" class="span11" value="{{ menuitem.item_description }}" />
-                <span class="help-block">Description field</span> </div>
-            </div>
-            <div class="form-actions">
-              <input type="hidden" name="_method" value="POST">
-              <button type="submit" class="btn btn-success">Save</button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div></div>
-
-<hr/>
-<!--Footer-part-->
-<div class="row-fluid">
-  <div id="footer" class="span12"> 2020 &copy; Rulet. Loboda Kirill </div>
-</div>
-<!--end-Footer-part--> 
-<script src="{% static "account/js/jquery.min.js" %}"></script> 
-<script src="{% static "account/js/jquery.ui.custom.js" %}"></script> 
-<script src="{% static "account/js/bootstrap.min.js" %}"></script> 
-<script src="{% static "account/js/bootstrap-colorpicker.js" %}"></script> 
-<script src="{% static "account/js/bootstrap-datepicker.js" %}"></script> 
-<script src="{% static "account/js/jquery.toggle.buttons.js" %}"></script> 
-<script src="{% static "account/js/masked.js" %}"></script> 
-<script src="{% static "account/js/jquery.uniform.js" %}"></script> 
-<script src="{% static "account/js/select2.min.js" %}"></script> 
-<script src="{% static "account/js/matrix.js" %}"></script> 
-<script src="{% static "account/js/matrix.form_common.js" %}"></script> 
-<script src="{% static "account/js/wysihtml5-0.3.0.js" %}"></script> 
-<script src="{% static "account/js/jquery.peity.min.js" %}"></script> 
-<script src="{% static "account/js/bootstrap-wysihtml5.js" %}"></script> 
-<script>
-	$('.textarea_editor').wysihtml5();
-</script>
-</body>
-</html>
+{% endblock content %}
