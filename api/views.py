@@ -74,10 +74,10 @@ class ChefViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     # queryset = models.Order.objects.all()
-    serializer_class = serializers.OrderSerializer
+    # serializer_class = serializers.OrderSerializer
 
     def create(self, request, *args, **kwargs):
-        request.data['customer'] = request.user
+        request.data['customer'] = None
         request.data['entity'] = kwargs['entity_pk']
         
         return super().create(request, *args, **kwargs)

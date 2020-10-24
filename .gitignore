@@ -21,3 +21,5 @@ dmypy.json
 *.sqlite3
 migrations/
 media/
+
+*.log

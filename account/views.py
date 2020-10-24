@@ -60,14 +60,14 @@ def index(request):
 
         categories = list(Category.objects.filter(entity=entity))
         
-        c = random.sample(colors, len(categories))
+        c = random.choices(colors, k=len(categories))
 
         ziped = tuple(zip(categories, c))
         print(ziped)
 
         return render(request, 'account/index.html', {'title':'index', 'ziped': ziped}) 
-    
-    return render(request, 'account/login.html', {'title':'index'}) 
+
+    return redirect('login')
 
 
 class CategoryView(View):
@@ -119,7 +119,7 @@ class CategoryDetailView(View):
 
             category = Category.objects.get(pk=pk)
 
-            return render(request, 'account/category_edit.html', {'title':'index', 'category': category}) 
+            return render(request, 'account/category_edit.html', {'title':category.name, 'category': category}) 
 
         return redirect('index')
 
@@ -160,14 +160,16 @@ class MenuItemView(View):
             category_id = request.GET.get('category')
             employee = request.user.employee
             entity = employee.entity
+            title = 'Menu'
 
             menu_items = MenuItem.objects.filter(entity=entity)
             categories = Category.objects.filter(entity=entity)
 
             if category_id is not None:
                 menu_items = menu_items.filter(category__id=category_id)
+                title = Category.objects.get(pk=category_id).name
 
-            return render(request, 'account/menu.html', {'title':'index', 'menu_items': menu_items, 'categories': categories}) 
+            return render(request, 'account/menu.html', {'title':title, 'menu_items': menu_items, 'categories': categories}) 
 
         return redirect('index')
     
@@ -199,7 +201,7 @@ class MenuItemDetailView(View):
             menuitem = MenuItem.objects.get(pk=pk)
             categories = Category.objects.filter(entity=entity)
 
-            return render(request, 'account/menu_edit.html', {'title':'index', 'menuitem': menuitem, 'categories': categories}) 
+            return render(request, 'account/menu_edit.html', {'title':menuitem.item_type, 'menuitem': menuitem, 'categories': categories}) 
 
         return redirect('index')
 
@@ -275,31 +277,6 @@ class EmployeeDetailView(View):
             return self.delete(*args, **kwargs)
         return super(EmployeeDetailView, self).dispatch(*args, **kwargs)
 
-    # def get(self, request, pk, *args, **kwargs):
-    #     if request.user.is_authenticated:
-    #         employee = request.user.employee
-    #         entity = employee.entity
-
-    #         menuitem = MenuItem.objects.get(pk=pk)
-    #         categories = Category.objects.filter(entity=entity)
-
-    #         return render(request, 'account/menu_edit.html', {'title':'index', 'menuitem': menuitem, 'categories': categories}) 
-
-    #     return redirect('index')
-
-    # def post(self, request, pk, *args, **kwargs):
-        
-    #     menuitem = MenuItem.objects.get(pk=pk)
-    #     form = MenuItemDetailForm(request.POST, request.FILES, instance=menuitem)
-    #     if form.is_valid():
-    #         form.save()
-    #         return redirect('index')
-
-    #     content = {
-    #         'error': form.errors
-    #     }
-    #     return Response(content, status=status.HTTP_400_BAD_REQUEST)
-
     def delete(self, request, pk, *args, **kwargs):
 
         Employee.objects.get(pk=pk).delete()
@@ -333,7 +310,9 @@ def send_confirmation(user):
     html_content = htmly.render(d) 
     msg = EmailMultiAlternatives(subject, html_content, from_email, [to]) 
     msg.attach_alternative(html_content, "text/html") 
-    Process(target=msg.send).start()
+    p = Process(target=msg.send)
+    p.start()
+    p.join()
 
 
 ################ login forms################################################### 
@@ -349,6 +328,7 @@ def Login(request):
             return redirect('index') 
         else: 
             messages.info(request, f'account done not exit plz sign in') 
+            return HttpResponse('Unauthorized', status=401)
     # form = AuthenticationForm() 
     # return render(request, 'account/login.html', {'form':form, 'title':'log in'}) 
     return render(request, 'account/login.html', {'title':'log in'}) 

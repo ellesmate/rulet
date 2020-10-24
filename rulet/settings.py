@@ -27,7 +27,8 @@ SECRET_KEY = ')*9k^etp6h!d162$du(=(0%1fyguo7!veo#xw39!#ur75@wp8o'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-MAIN_HOST = '192.168.0.93'
+MAIN_HOST = '192.168.1.4'
+# MAIN_HOST = '172.20.10.13'
 ALLOWED_HOSTS = [MAIN_HOST, '127.0.0.1']
 
 
@@ -86,25 +87,38 @@ WSGI_APPLICATION = 'rulet.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+
+#         'NAME': os.getenv('DB_NAME'),
+
+#         'USER': os.getenv('DB_USER'),
+
+#         'PASSWORD': os.getenv('DB_PASSWORD'),
+
+#         'HOST': os.getenv('DB_HOST'),
+
+#         'PORT': os.getenv('DB_PORT'),
+#     }
+# }
+
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 
-        'NAME': os.getenv('DB_NAME'),
+        'NAME': 'ruletdb',
 
-        'USER': os.getenv('DB_USER'),
+        'USER': 'lbdkira',
 
-        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'PASSWORD': 'akastica',
 
-        'HOST': os.getenv('DB_HOST'),
+        'HOST': '127.0.0.1',
 
-        'PORT': os.getenv('DB_PORT'),
+        'PORT': '',
     }
 }
+
 
 
 # Password validation
@@ -177,3 +191,51 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 ##########################################
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'views-debug.log',
+        },
+        'file_django':{
+            'level' : 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'django_logs.log',
+        },
+########################################################################
+        'console': {
+            'level':'DEBUG',
+            'class': 'logging.StreamHandler',
+#            'filters': ['special'],
+            'formatter':'simple',
+        },
+    },
+    # Loggers ####################################################################
+    'loggers': {
+        'mine': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
+        },
+        'django': {
+            'handlers': ['file_django'],
+            'level': 'DEBUG',
+            'propagate': True,
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
+        },
+    },
+}

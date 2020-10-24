@@ -78,7 +78,7 @@
     <div class="quick-actions_homepage">
       <ul class="quick-actions">
         {% for z in ziped %}
-          <li class="bg_l{{z.1}}"> <a href="/menu/?category={{ z.0.id }}"><p><img src="/media/{{ z.0.image }}/" width="100px" /></p><p>{{ z.0.name }}</p></a></li>
+          <li class="bg_l{{z.1}}"> <a href="/menu/?category={{ z.0.id }}"><p><img src="/media/{{ z.0.image }}/" width="100px" height="100px" style="width:100px;height:100px;"/></p><p>{{ z.0.name }}</p></a></li>
         {% endfor %}
       </ul>
     </div>
