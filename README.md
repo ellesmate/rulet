@@ -1,4 +1,4 @@
-## <a href="http://example.com/" target="_blank">Link to Android app.</a>
+## <a href="https://github.com/ellesmate/e-shop-android" target="_blank">Link to Android app.</a>
  
 
 ![](./screenshots/1.png)
