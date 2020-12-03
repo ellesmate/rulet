@@ -1,4 +1,4 @@
-## <a href="https://github.com/ellesmate/RuletAndroid" target="_blank">Link to Android app.</a>
+## <a href="https://github.com/ellesmate/RuletChef" target="_blank">Link to Android app.</a>
  
 
 ![](./screenshots/1.png)
